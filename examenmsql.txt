@@ -1,0 +1,323 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema examen
+-- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `examen` ;
+
+-- -----------------------------------------------------
+-- Schema examen
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `examen` DEFAULT CHARACTER SET utf8 ;
+-- -----------------------------------------------------
+-- Schema sistema_ventas
+-- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `sistema_ventas` ;
+
+-- -----------------------------------------------------
+-- Schema sistema_ventas
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `sistema_ventas` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+USE `examen` ;
+
+-- -----------------------------------------------------
+-- Table `examen`.`producto`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `examen`.`producto` ;
+
+CREATE TABLE IF NOT EXISTS `examen`.`producto` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `precio` INT NOT NULL,
+  `categoria_fk` INT NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `examen`.`Categoria`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `examen`.`Categoria` ;
+
+CREATE TABLE IF NOT EXISTS `examen`.`Categoria` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  `producto_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_Categoria_producto_idx` (`producto_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Categoria_producto`
+    FOREIGN KEY (`producto_id`)
+    REFERENCES `examen`.`producto` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `examen`.`cliente`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `examen`.`cliente` ;
+
+CREATE TABLE IF NOT EXISTS `examen`.`cliente` (
+  `id` INT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  `apellido` VARCHAR(45) NOT NULL,
+  `email` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `examen`.`empleado`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `examen`.`empleado` ;
+
+CREATE TABLE IF NOT EXISTS `examen`.`empleado` (
+  `id` INT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  `apellido` VARCHAR(45) NOT NULL,
+  `cargo` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `examen`.`venta`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `examen`.`venta` ;
+
+CREATE TABLE IF NOT EXISTS `examen`.`venta` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `fecha` VARCHAR(45) NOT NULL,
+  `cliente_fk` INT NOT NULL,
+  `empleado_fk` INT NOT NULL)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `examen`.`detalle_venta`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `examen`.`detalle_venta` ;
+
+CREATE TABLE IF NOT EXISTS `examen`.`detalle_venta` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `venta_fk` INT NOT NULL,
+  `producto_fk` INT NOT NULL,
+  `cantidad` INT NOT NULL,
+  `subtotal` VARCHAR(45) NOT NULL)
+ENGINE = InnoDB;
+
+USE `sistema_ventas` ;
+
+-- -----------------------------------------------------
+-- Table `sistema_ventas`.`categoria`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `sistema_ventas`.`categoria` ;
+
+CREATE TABLE IF NOT EXISTS `sistema_ventas`.`categoria` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `sistema_ventas`.`cliente`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `sistema_ventas`.`cliente` ;
+
+CREATE TABLE IF NOT EXISTS `sistema_ventas`.`cliente` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(50) NOT NULL,
+  `apellido` VARCHAR(50) NOT NULL,
+  `telefono` VARCHAR(20) NULL DEFAULT NULL,
+  `email` VARCHAR(100) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `sistema_ventas`.`producto`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `sistema_ventas`.`producto` ;
+
+CREATE TABLE IF NOT EXISTS `sistema_ventas`.`producto` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(100) NOT NULL,
+  `precio` DECIMAL(10,2) NOT NULL,
+  `categoria_fk` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_producto_categoria` (`categoria_fk` ASC) VISIBLE,
+  CONSTRAINT `fk_producto_categoria`
+    FOREIGN KEY (`categoria_fk`)
+    REFERENCES `sistema_ventas`.`categoria` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `sistema_ventas`.`empleado`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `sistema_ventas`.`empleado` ;
+
+CREATE TABLE IF NOT EXISTS `sistema_ventas`.`empleado` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(50) NOT NULL,
+  `apellido` VARCHAR(50) NOT NULL,
+  `cargo` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `sistema_ventas`.`venta`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `sistema_ventas`.`venta` ;
+
+CREATE TABLE IF NOT EXISTS `sistema_ventas`.`venta` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `fecha` DATE NOT NULL,
+  `cliente_fk` INT NOT NULL,
+  `empleado_fk` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_venta_cliente` (`cliente_fk` ASC) VISIBLE,
+  INDEX `fk_venta_empleado` (`empleado_fk` ASC) VISIBLE,
+  CONSTRAINT `fk_venta_cliente`
+    FOREIGN KEY (`cliente_fk`)
+    REFERENCES `sistema_ventas`.`cliente` (`id`),
+  CONSTRAINT `fk_venta_empleado`
+    FOREIGN KEY (`empleado_fk`)
+    REFERENCES `sistema_ventas`.`empleado` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `sistema_ventas`.`detalle_venta`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `sistema_ventas`.`detalle_venta` ;
+
+CREATE TABLE IF NOT EXISTS `sistema_ventas`.`detalle_venta` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `venta_fk` INT NOT NULL,
+  `producto_fk` INT NOT NULL,
+  `cantidad` INT NOT NULL,
+  `subtotal` DECIMAL(10,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_detalle_venta` (`venta_fk` ASC) VISIBLE,
+  INDEX `fk_detalle_producto` (`producto_fk` ASC) VISIBLE,
+  CONSTRAINT `fk_detalle_producto`
+    FOREIGN KEY (`producto_fk`)
+    REFERENCES `sistema_ventas`.`producto` (`id`),
+  CONSTRAINT `fk_detalle_venta`
+    FOREIGN KEY (`venta_fk`)
+    REFERENCES `sistema_ventas`.`venta` (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+INSERTS 
+USE sistema_ventas;
+
+INSERT INTO categoria (nombre) VALUES
+('Computadores'),
+('Perifericos'),
+('Almacenamiento'),
+('Componentes');
+
+INSERT INTO cliente (nombre, apellido, telefono, email) VALUES
+('Juan', 'Perez', '3101234567', 'juan.perez@gmail.com'),
+('Maria', 'Gomez', '3117654321', 'maria.gomez@gmail.com'),
+('Carlos', 'Rodriguez', '3129988776', 'carlos.rodriguez@gmail.com'),
+('Laura', 'Martinez', '3135566778', 'laura.martinez@gmail.com');
+
+INSERT INTO empleado (nombre, apellido, cargo) VALUES
+('Andres', 'Torres', 'Vendedor'),
+('Camila', 'Ramirez', 'Vendedor'),
+('Sebastian', 'Castro', 'Vendedor'),
+('Daniela', 'Moreno', 'Vendedor');
+
+INSERT INTO producto (nombre, precio, categoria_fk) VALUES
+('Laptop HP Pavilion 15', 2800000, 1),
+('Laptop Lenovo ThinkPad', 3500000, 1),
+('PC Gamer Ryzen 5', 4200000, 1),
+('Mouse Logitech G203', 85000, 2),
+('Teclado Mecanico Redragon', 150000, 2),
+('Audifonos HyperX Cloud', 220000, 2),
+('Disco SSD Kingston 480GB', 190000, 3),
+('Disco Duro Seagate 1TB', 210000, 3),
+('Memoria USB SanDisk 64GB', 45000, 3),
+('Tarjeta de Video RTX 3060', 1800000, 4),
+('Memoria RAM Corsair 16GB', 320000, 4),
+('Fuente de Poder EVGA 600W', 280000, 4);
+
+INSERT INTO venta (fecha, cliente_fk, empleado_fk) VALUES
+('2026-01-05', 1, 1),
+('2026-01-10', 2, 1),
+('2026-01-15', 3, 2),
+('2026-01-20', 1, 2),
+('2026-02-02', 4, 3),
+('2026-02-05', 2, 3),
+('2026-02-10', 3, 4),
+('2026-02-15', 1, 4),
+('2026-02-20', 4, 1),
+('2026-02-25', 2, 2);
+
+INSERT INTO detalle_venta (venta_fk, producto_fk, cantidad, subtotal) VALUES
+(1, 1, 1, 2800000),
+(1, 4, 2, 170000),
+(2, 2, 1, 3500000),
+(3, 5, 1, 150000),
+(3, 6, 1, 220000),
+(4, 7, 2, 380000),
+(5, 3, 1, 4200000),
+(6, 8, 1, 210000),
+(6, 10, 1, 1800000),
+(7, 11, 2, 640000),
+(8, 4, 1, 85000),
+(8, 6, 1, 220000),
+(9, 2, 1, 3500000),
+(10, 1, 1, 2800000),
+(10, 5, 1, 150000);
+
+
+consultas
+select producto.nombre, producto_precio, categoria.nombre AS categoria
+FROM producto 
+Join categoria on producto.categoria_fk = categoria.id
+
+Select venta.id, venta.fecha,
+	concat (cliente.nombre, ' ', cliente.apellido) AS cliente,
+    concat (empleado.nombre, ' ', empleado,apellido) AS empleado
+FROM venta
+JOIN cliente ON venta.cliente_fk = cliente.id
+JOIN empleado ON venta.empleado_fk = empleado.id;
+
+SELECT categoria.nombre, count(producto.id) AS cantidad_productos
+FROM categoria
+JOIN producto ON producto.categoria_fk = categoria.id
+group by categoria.id
+ORDER BY cantidad_productos DESC;
+
+select producto.nombre, producto.precio, categoria.nombre AS categoria
+FROM producto
+JOIN categoria ON producto.categoria_fk = categoria.id
+left join detalle_venta ON detalle_venta.producto_fk = producto.id
+where detalle_venta.id is null;
